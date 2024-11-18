@@ -1,0 +1,30 @@
+from typing import Literal
+from langgraph.graph import END
+from nodes.agent_state import AgentState
+from nodes.nodes_name import (
+    PYTHON_CODE_RE_GENERATION,
+    REPORT_GENERATOR,
+    REPORTS_COMBINER
+)
+
+
+def make_decision(state: AgentState) -> Literal[ REPORT_GENERATOR, PYTHON_CODE_RE_GENERATION ]:
+    print("--- MAKING DECISION ---")
+    execution_error = state.get("execution_error", None)
+    Python_script_check = state['Python_script_check']
+    max_Python_script_check = state['max_Python_script_check']
+
+    if execution_error:
+        if Python_script_check >= max_Python_script_check:
+            print(f"------ Go to {END} ------")
+            return END
+        else:
+            Python_script_check = Python_script_check + 1
+            state.update({
+                "Python_script_check": Python_script_check,
+            })
+            print(f"------ Go to {PYTHON_CODE_RE_GENERATION} ------")
+            return PYTHON_CODE_RE_GENERATION
+    else:
+        print(f"------ Go to {REPORT_GENERATOR} ------")
+        return REPORT_GENERATOR

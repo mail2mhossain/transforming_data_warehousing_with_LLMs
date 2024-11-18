@@ -1,2 +1,37 @@
-# transforming_data_warehousing_with_LLMs
-Transforming Data Warehousing with LLMs and OLAP Techniques
+# Automating CSV Data Analysis with LLMs: A Comprehensive Workflow
+
+
+## Implementation Guide
+
+Follow these steps to deploy the workflow:
+
+1. **Clone the source code from GitHub**:
+   ```bash
+   git clone https://github.com/mail2mhossain/transforming_data_warehousing_with_LLMs.git
+   cd transforming_data_warehousing_with_LLMs
+   ```
+
+2. **Create a Conda environment (Assuming Anaconda is installed):**:
+   ```bash
+   conda create -n analytics_env python=3.11
+   ```
+
+3. **Activate the environment**:
+   ```bash
+   conda activate analytics_env
+   ```
+
+4. **Install the required packages**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. **Run the app**:
+   ```bash
+   streamlit run app.py
+   ```
+
+To remove the environment when done:
+```bash
+conda remove --name analytics_env --all
+```
