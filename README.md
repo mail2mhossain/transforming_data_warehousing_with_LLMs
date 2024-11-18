@@ -1,9 +1,4 @@
-# Automating CSV Data Analysis with LLMs: A Comprehensive Workflow
-
-
-## Implementation Guide
-
-Follow these steps to deploy the workflow:
+# Setup and Running the Demo App
 
 1. **Clone the source code from GitHub**:
    ```bash
