@@ -66,4 +66,5 @@ def generate_Python_code(state: AgentState) -> AgentState:
     print(f"Python Code:\n{code}")
     return {
         "Python_Code" : code,
+        "execution_error": None
     }

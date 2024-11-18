@@ -14,8 +14,6 @@ from nodes.re_generate_Python_script import re_generate_Python_code
 from nodes.report_generator_node import generate_report
 from nodes.make_decision_node import make_decision
 from nodes.generate_report_type_node import get_report_type
-from nodes.embedding_search_node import get_search_results
-from nodes.report_from_embedding_search_node import generate_report_from_embedding_search
 from nodes.agent_state import AgentState 
 from nodes.nodes_name import (
     DATASET_DETAILS,

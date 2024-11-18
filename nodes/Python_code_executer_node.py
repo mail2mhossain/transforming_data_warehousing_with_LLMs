@@ -14,7 +14,7 @@ def run_python_code(state: AgentState) -> AgentState:
     
     try: 
         results = python_repl.run(Python_script)     
-        if "error" in results.lower():
+        if "error:" in results.lower():
             return {
                 "execution_error": results
             }

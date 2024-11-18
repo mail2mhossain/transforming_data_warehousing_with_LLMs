@@ -66,5 +66,6 @@ def re_generate_Python_code(state: AgentState) -> AgentState:
     print(f"Re-generated Python code:\n{code}")
     return {
         "Python_Code" : code,
+        "execution_error": None,
         "Python_script_check": Python_script_check + 1
     }

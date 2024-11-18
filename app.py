@@ -18,13 +18,14 @@ from nodes.load_new_data_node import load_new_data
 from db_graph_generator import execute_graph
 from analytics_graph_generator import get_reports
 from dotenv import load_dotenv, set_key
+from decouple import config
+from decouple import AutoConfig
 
 st.cache_data.clear()
 
 load_dotenv()
-
+config = AutoConfig()
 data_directory = os.path.join(os.path.dirname(__file__), "data")
-
 
 # Initialize session states
 if 'history' not in st.session_state:
@@ -44,9 +45,10 @@ if 'form_submitted' not in st.session_state:
 if 'data_frame' not in st.session_state:
     st.session_state['data_frame'] = None  # Store the DataFrame directly in session state
 if 'openai_api_key' not in st.session_state:
-    st.session_state['openai_api_key'] = os.getenv("OPENAI_API_KEY", "")
+    st.session_state['openai_api_key'] = config("OPENAI_API_KEY", default="")
+    
 if 'gpt_model' not in st.session_state:
-    st.session_state['gpt_model'] = os.getenv("GPT_MODEL", None)
+    st.session_state['gpt_model'] = config("GPT_MODEL", default="gpt-4o")
 if "result_queue" not in st.session_state:
     st.session_state.result_queue = LifoQueue()
 if "embedding_thread" not in st.session_state:
@@ -62,6 +64,7 @@ if "progress_caption" not in st.session_state:
 def update_env_variable(key, value):
     env_path = ".env"
     set_key(env_path, key, value)
+    
 
 def sanitize_filename(query):
     # Remove special characters and limit filename length
@@ -415,7 +418,9 @@ def configuration_content():
         st.session_state['openai_api_key'] = api_key_input
         st.session_state['gpt_model'] = model_name_input
         update_env_variable("OPENAI_API_KEY", api_key_input)
+        st.session_state['openai_api_key'] = api_key_input
         update_env_variable("GPT_MODEL", model_name_input)
+        st.session_state['gpt_model'] = model_name_input
         load_dotenv()
         st.success("Configuration saved successfully!")
 

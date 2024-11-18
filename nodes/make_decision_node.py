@@ -16,13 +16,14 @@ def make_decision(state: AgentState) -> Literal[ REPORT_GENERATOR, PYTHON_CODE_R
 
     if execution_error:
         if Python_script_check >= max_Python_script_check:
-            print(f"------ Go to {END} ------")
+            print(f"------ Go to {END},  BCOZ {Python_script_check} times tried and failed -------")
             return END
         else:
             Python_script_check = Python_script_check + 1
             state.update({
                 "Python_script_check": Python_script_check,
             })
+            print(f"Execution Error: {execution_error} - {Python_script_check} times")
             print(f"------ Go to {PYTHON_CODE_RE_GENERATION} ------")
             return PYTHON_CODE_RE_GENERATION
     else:
