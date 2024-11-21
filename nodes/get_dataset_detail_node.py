@@ -6,6 +6,7 @@ def get_dataset_detail(state: AgentState) -> AgentState:
     dataset_name = state["dataset_name"]
     db_info = get_db_info_by_dataset(dataset_name)
 
+    print(f"Table Name: {db_info.table_name}")
     return {
         "db_path": db_info.duck_db_path,
         "table_name": db_info.table_name,

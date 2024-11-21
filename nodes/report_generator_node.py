@@ -32,7 +32,7 @@ def generate_report(state: AgentState) -> AgentState:
     OPENAI_API_KEY = config("OPENAI_API_KEY")
     GPT_MODEL = config("GPT_MODEL")
 
-    query = state["query"]
+    rephrased_query = state["rephrased_query"]
     df = state["data_frame"]
     column_descriptions = state["column_descriptions"]
     description_dict = json.loads(column_descriptions)['columns'] # List object
@@ -47,7 +47,7 @@ def generate_report(state: AgentState) -> AgentState:
     )
     llm = ChatOpenAI(model_name=GPT_MODEL, temperature=0, openai_api_key=OPENAI_API_KEY)
     chain = prompt | llm | StrOutputParser()
-    reports = chain.invoke({"query": query, 
+    reports = chain.invoke({"query": rephrased_query, 
                             "column_descriptions": str(description_dict),
                             "execution_results": execution_results, 
                             "df": str(df)})

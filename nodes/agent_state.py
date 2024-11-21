@@ -8,11 +8,13 @@ from pydantic import BaseModel
 class AgentState(TypedDict):
     # messages: Annotated[list[AnyMessage], add_messages]
     query: str
+    rephrased_query: str
     dataset_name: str
     db_path: str
     table_name: str
     column_descriptions: str
     sample_data: str
+    is_query_relevant: bool
     SQL_query: str
     sanitize_check: int
     max_sanitize_check: int

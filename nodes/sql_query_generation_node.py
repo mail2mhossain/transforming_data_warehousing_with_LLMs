@@ -50,7 +50,7 @@ def generate_sql_query(state:AgentState)->AgentState:
     response = chain.invoke({
         "relevant_tables_and_columns": relevant_tables_and_columns, 
         "sample_data": state["sample_data"],
-        "query": state["query"]
+        "query": state["rephrased_query"]
     })
     print(f"Generated SQL query: {response}")
     return {

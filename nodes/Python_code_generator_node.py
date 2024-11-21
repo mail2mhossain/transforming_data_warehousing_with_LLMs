@@ -30,7 +30,7 @@ def generate_Python_code(state: AgentState) -> AgentState:
     OPENAI_API_KEY = config("OPENAI_API_KEY")
     GPT_MODEL = config("GPT_MODEL")
 
-    query = state["query"]
+    rephrased_query = state["rephrased_query"]
     column_descriptions = state["column_descriptions"]
     description_dict = json.loads(column_descriptions)['columns'] # List object
     description_dict = {item['name']: item['description'] for item in description_dict}  # Dictionary
@@ -38,8 +38,8 @@ def generate_Python_code(state: AgentState) -> AgentState:
     report_type= state["report_type"]
     df = state["data_frame"]
 
-    user_query = f"""
-        {query}
+    rephrased_query = f"""
+        {rephrased_query}
         Do it in Python and generate a single report. Report should include text, tables, charts, images and plots.
         Combine numerical analysis with narrative descriptions, visualizations and charts.
         If any visualization is needed, save it in images folder with unique file name including uuid.
@@ -50,7 +50,7 @@ def generate_Python_code(state: AgentState) -> AgentState:
     prompt = ChatPromptTemplate.from_messages(
         [
             SystemMessagePromptTemplate.from_template(sys_msg),
-            HumanMessagePromptTemplate.from_template(user_query),
+            HumanMessagePromptTemplate.from_template(rephrased_query),
         ]
     )
 
