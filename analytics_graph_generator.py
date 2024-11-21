@@ -2,7 +2,6 @@
 from langgraph.graph import START, StateGraph, END
 from langgraph.graph.graph import CompiledGraph
 from nodes.query_relevancy_check_node import check_query_relevancy
-from nodes.make_decision_based_on_query_relevant_node import make_decision_on_query_relevancy
 from nodes.query_relevancy_report_node import query_relevancy_report
 from nodes.query_re_write_node import re_write_query
 from nodes.get_dataset_detail_node import get_dataset_detail
@@ -22,7 +21,6 @@ from nodes.make_decision_node import make_decision
 from nodes.generate_report_type_node import get_report_type
 from nodes.agent_state import AgentState 
 from nodes.nodes_name import (
-    QUERY_RELEVANCY_CHECKER, 
     QUERY_RELEVANCY_REPORT,
     RE_WRITE_QUERY,
     DATASET_DETAILS,
@@ -40,7 +38,6 @@ from nodes.nodes_name import (
 
 def generate_graph()-> CompiledGraph:
     workflow = StateGraph(AgentState)
-    workflow.add_node(QUERY_RELEVANCY_CHECKER, check_query_relevancy)
     workflow.add_node(QUERY_RELEVANCY_REPORT, query_relevancy_report)
     workflow.add_node(RE_WRITE_QUERY, re_write_query)
 
@@ -63,11 +60,10 @@ def generate_graph()-> CompiledGraph:
 
 
     workflow.add_edge(START, DATASET_DETAILS)
-    workflow.add_edge(DATASET_DETAILS, QUERY_RELEVANCY_CHECKER)
     
     workflow.add_conditional_edges(
-        QUERY_RELEVANCY_CHECKER,
-        make_decision_on_query_relevancy,
+        DATASET_DETAILS,
+        check_query_relevancy,
     )
 
     workflow.add_edge(RE_WRITE_QUERY, QUERY_GENERATION)
@@ -126,5 +122,4 @@ def get_reports(dataset_name, query):
                 'max_Python_script_check': 5,
                 })
 
-   
     return results.get("reports", "No reports found")

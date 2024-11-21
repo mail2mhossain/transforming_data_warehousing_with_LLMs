@@ -4,6 +4,7 @@ from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from decouple import config
 from nodes.agent_state import AgentState
+from nodes.nodes_name import RE_WRITE_QUERY, QUERY_RELEVANCY_REPORT
 
 
 sys_msg = """
@@ -14,7 +15,7 @@ sys_msg = """
     """
 
 
-def check_query_relevancy(state: AgentState) -> AgentState:
+def check_query_relevancy(state: AgentState) -> Literal[ RE_WRITE_QUERY, QUERY_RELEVANCY_REPORT ]:
     print("--- QUERY RELEVANCY CHECK ---")
 
     OPENAI_API_KEY = config("OPENAI_API_KEY")
@@ -47,8 +48,8 @@ def check_query_relevancy(state: AgentState) -> AgentState:
     grade = scored_result.binary_score
 
     if grade == "yes":
-        return {"is_query_relevant" : True}
+        return RE_WRITE_QUERY
     else:
 
-        return {"is_query_relevant": False}
+        return QUERY_RELEVANCY_REPORT
 

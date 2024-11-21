@@ -1,4 +1,3 @@
-QUERY_RELEVANCY_CHECKER = "check_query_relevancy"
 QUERY_RELEVANCY_REPORT = "query_relevancy_report"
 RE_WRITE_QUERY = "re_write_query"
 DATASET_DETAILS = "dataset_detail"
