@@ -16,8 +16,6 @@ class AgentState(TypedDict):
     sample_data: str
     is_query_relevant: bool
     SQL_query: str
-    sanitize_check: int
-    max_sanitize_check: int
     SQL_error: str
     sql_generation_try: int
     max_sql_generation_try: int

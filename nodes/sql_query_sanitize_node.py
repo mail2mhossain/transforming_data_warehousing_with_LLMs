@@ -8,7 +8,7 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
 )
 from nodes.agent_state import AgentState
-from nodes.nodes_name import EXECUTE_SQL_QUERY, QUERY_GENERATION, RE_GENERATE_SQL_QUERY
+from nodes.nodes_name import EXECUTE_SQL_QUERY, QUERY_GENERATION, RE_GENERATE_SQL_QUERY, SQL_QUERY_SANITIZE_REPORT
 from langchain_openai import ChatOpenAI
 from decouple import config
 
@@ -28,7 +28,7 @@ class sanitizing_queries(BaseModel):
     is_safe: bool
     reason: str
 
-def sanitize_sql_query(state:AgentState) -> Literal[ END, EXECUTE_SQL_QUERY, QUERY_GENERATION, RE_GENERATE_SQL_QUERY ]:
+def sanitize_sql_query(state:AgentState) -> Literal[ SQL_QUERY_SANITIZE_REPORT, EXECUTE_SQL_QUERY]:
     """
     This function uses OpenAI's LLM to sanitize a given SQL query, allowing only 'SELECT' operations.
     Any query that contains 'UPDATE', 'INSERT', 'DELETE', or other modifying operations will be flagged as unsafe.
@@ -47,8 +47,8 @@ def sanitize_sql_query(state:AgentState) -> Literal[ END, EXECUTE_SQL_QUERY, QUE
     llm = ChatOpenAI(model_name=GPT_MODEL, temperature=0, openai_api_key=OPENAI_API_KEY)
     
     sql_query = state["SQL_query"]
-    sanitize_check = state["sanitize_check"]
-    max_sanitize_check = state["max_sanitize_check"]
+    # sanitize_check = state["sanitize_check"]
+    # max_sanitize_check = state["max_sanitize_check"]
     
     # Define the system prompt to instruct the model to analyze the SQL query for safety
     prompt = ChatPromptTemplate.from_messages(
@@ -65,13 +65,18 @@ def sanitize_sql_query(state:AgentState) -> Literal[ END, EXECUTE_SQL_QUERY, QUE
     if response.is_safe == True:
         return EXECUTE_SQL_QUERY
     else:
-        if sanitize_check >= max_sanitize_check:
-            return END
-        sanitize_check = sanitize_check + 1
-        state.update({
-                "sanitize_check": sanitize_check,
-            })
-        if state['SQL_error']:
-            return RE_GENERATE_SQL_QUERY
-        else:
-            return QUERY_GENERATION
+        return SQL_QUERY_SANITIZE_REPORT
+        # if sanitize_check >= max_sanitize_check:
+        #     state.update({
+        #         "reports": response.reason,
+        #     })
+        #     return SQL_QUERY_SANITIZE_REPORT
+        # sanitize_check = sanitize_check + 1
+        # state.update({
+        #         "sanitize_check": sanitize_check,
+        #     })
+        # SQL_error = state.get('SQL_error', None)
+        # if SQL_error:
+        #     return RE_GENERATE_SQL_QUERY
+        # else:
+        #     return QUERY_GENERATION

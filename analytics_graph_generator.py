@@ -8,6 +8,7 @@ from nodes.query_re_write_node import re_write_query
 from nodes.get_dataset_detail_node import get_dataset_detail
 from nodes.sql_query_generation_node import generate_sql_query
 from nodes.sql_query_sanitize_node import sanitize_sql_query
+from nodes.sql_query_sanitize_report_node import sql_query_sanitize_report
 from nodes.sql_query_executer_node import execute_sql_query
 from nodes.sql_query_error_report_node import sql_query_error_report
 from nodes.sql_query_regeneration_node import regenerate_sql_query
@@ -33,6 +34,7 @@ from nodes.nodes_name import (
     PYTHON_CODE_EXECUTER,
     PYTHON_CODE_RE_GENERATION,
     REPORT_GENERATOR,
+    SQL_QUERY_SANITIZE_REPORT,
     REPORT_TYPE,
 )
 
@@ -48,6 +50,8 @@ def generate_graph()-> CompiledGraph:
     workflow.add_node(EXECUTE_SQL_QUERY, execute_sql_query)
     workflow.add_node(SQL_QUERY_EXECUTION_ERROR_REPORT, sql_query_error_report)
     workflow.add_node(RE_GENERATE_SQL_QUERY, regenerate_sql_query)
+
+    workflow.add_node(SQL_QUERY_SANITIZE_REPORT, sql_query_sanitize_report)
 
     workflow.add_node(REPORT_TYPE, get_report_type)
 
@@ -100,6 +104,7 @@ def generate_graph()-> CompiledGraph:
     )
 
     workflow.add_edge(QUERY_RELEVANCY_REPORT, END)
+    workflow.add_edge(SQL_QUERY_SANITIZE_REPORT, END)
     workflow.add_edge(SQL_QUERY_EXECUTION_ERROR_REPORT, END)
     workflow.add_edge(REPORT_GENERATOR, END)
 
@@ -115,8 +120,6 @@ def get_reports(dataset_name, query):
 
     results = app.invoke({"dataset_name": dataset_name, 
                 "query": query, 
-                "sanitize_check": 0,
-                "max_sanitize_check": 5,
                 "sql_generation_try": 0,
                 "max_sql_generation_try": 5,
                 'Python_script_check': 0,
@@ -125,6 +128,3 @@ def get_reports(dataset_name, query):
 
    
     return results.get("reports", "No reports found")
-
-# reports = get_reports("Green Trip Data", "Average Trip Distance by Payment Type")
-# print(reports)

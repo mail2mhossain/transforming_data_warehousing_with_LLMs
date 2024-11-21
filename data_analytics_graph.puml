@@ -7,8 +7,12 @@
 
     START: start
     dataset_detail : Get Dataset Details\n(Node)
+    query_relevancy_checker : Determine whether the user's query is relevant to this Data \n(ConditionalNode)
+    query_relevancy_report : Show user query relevancy message if query is not relevant.\n(Node)
+    re_write_query : Rewrite the query to make it more specific, structured, and aligned with the schema provided.\n(Node)
     generate_sql_query : SQL query generator\n(Node)
     sanitize_sql_query : Sanitize SQL query\n(ConditionalNode)
+    sanitize_sql_query_report: If SQL query is not safe, then inform user\n(Node)
     execute_sql_query : SQL query executer\n(Node)
     make_sql_decision : Check SQL error\n(Node)
     regenerate_sql_query : SQL query Re-generator.\n(Node)
@@ -22,13 +26,17 @@
 
 
     START --> dataset_detail: (dataset_name, query)
-    dataset_detail --> generate_sql_query
+    dataset_detail --> query_relevancy_checker
+
+    query_relevancy_checker --> query_relevancy_report: if query is not relevant
+    query_relevancy_checker --> re_write_query: if query is relevant
+
+    re_write_query --> generate_sql_query
+
     generate_sql_query --> sanitize_sql_query
 
     sanitize_sql_query --> execute_sql_query: if SQL query is safe
-    sanitize_sql_query --> generate_sql_query: if SQL query is NOT safe
-    sanitize_sql_query --> regenerate_sql_query: if SQL_error
-    sanitize_sql_query --> END: if sanitize_check >= max_sanitize_check
+    sanitize_sql_query --> sanitize_sql_query_report: If SQL query is not safe
 
     execute_sql_query --> make_sql_decision: To check SQL error
     make_sql_decision --> Python_Code_Generation: if NO SQL Error
@@ -50,6 +58,8 @@
     
     Python_Code_Re_Generation --> sanitize_python_script
 
+    query_relevancy_report --> END
+    sanitize_sql_query_report --> END
     Report_Generation --> END
 
 @enduml
