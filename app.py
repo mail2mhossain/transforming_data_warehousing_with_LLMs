@@ -66,6 +66,16 @@ def update_env_variable(key, value):
     set_key(env_path, key, value)
     
 
+def get_total_rows(available_datasets, dataset_name):
+    selected_dataset = next(
+            (dataset for dataset in available_datasets if dataset.get("name") == dataset_name),
+            None
+        )
+    total_rows_sum = sum(detail["total_rows"] for detail in selected_dataset.get("details", []))
+    
+    return total_rows_sum
+
+
 def sanitize_filename(query):
     # Remove special characters and limit filename length
     sanitized = re.sub(r'[^a-zA-Z0-9_\- ]', '', query)  # Allow only alphanumeric, underscore, hyphen, and space
@@ -207,6 +217,8 @@ def data_analysis_content():
             st.info("No datasets available. Please configure Dataset and upload data.")
 
     if st.session_state['selected_dataset_name']:
+        total_rows = get_total_rows(available_datasets, st.session_state['selected_dataset_name'])
+        st.write(f"Total number of rows in the dataset: {total_rows}")
         with st.form(key='query_form'):
             query = st.text_input("Enter your query:", value=st.session_state['query'], key="query_input")
             submit_button = st.form_submit_button(label="Generate Report", on_click=submit_query)
@@ -262,7 +274,8 @@ def edit_descriptions(key):
         submitted = st.form_submit_button("Save Changes")
         if submitted:
             st.session_state.form_submitted = True
-            print(f"Save button is pressed. {st.session_state.form_submitted}")
+            st.write(f"Save button is pressed. {st.session_state.form_submitted}")
+            
             
 def configure_dataset():
     st.subheader("Configure Datasets")
@@ -296,8 +309,24 @@ def configure_dataset():
     if st.session_state.get('data_frame') is not None and st.session_state.get('edited_columns'):
         st.dataframe(st.session_state['data_frame'].sample(10))
         
-        edit_descriptions("config")
+        key = "config"
+        # edit_descriptions(key)
 
+        with st.form("edit_columns_form"+key):
+            st.write("Modify the Column Descriptions (**Data Dictionary**)")
+            for i, column in enumerate(st.session_state.edited_columns):
+                description = st.text_area(
+                    f"Description for '{column['name']}'",
+                    value=column["description"],
+                    key=f"description_{i}_{key}" 
+                )
+                st.session_state.edited_columns[i]["description"] = description
+
+            submitted = st.form_submit_button("Save Changes")
+            if submitted:
+                st.session_state.form_submitted = True
+                st.write(f"Save button is pressed. {st.session_state.form_submitted}")
+            
         if st.session_state.form_submitted:
             # Convert edited data to JSON string format
             updated_json_data = json.dumps({"columns": st.session_state.edited_columns})
@@ -359,6 +388,8 @@ def upload_new_data():
     
     if st.session_state['selected_dataset_name_4_new_data']:
         dataset_name_4_upload_new_data = st.session_state['selected_dataset_name_4_new_data']
+        total_rows = get_total_rows(available_datasets, st.session_state['selected_dataset_name'])
+        st.write(f"Total number of rows in the dataset: {total_rows}")
         uploaded_file = st.file_uploader("Upload a parquet file", type="parquet", key="upload_new_data")
         if uploaded_file and dataset_name_4_upload_new_data:
             temp_file_path = get_temp_file(uploaded_file)
@@ -371,6 +402,8 @@ def upload_new_data():
                     message = load_new_data(dataset_name_4_upload_new_data, temp_file_path)
                     if message["success"]:
                         st.success(message["message"])
+                        total_rows_sum = total_rows_sum + message["total_rows"]
+                        st.write(f"Total number of rows in the dataset: {total_rows_sum}")
 
                     # thread = load_data_in_background(dataset_name_4_upload_new_data, temp_file_path, file_loading_message['offset'], file_loading_message['progress'] )
                     

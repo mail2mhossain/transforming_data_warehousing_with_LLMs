@@ -187,7 +187,7 @@ def get_all_file_info():
                 "column_descriptions": file.column_descriptions,
                 "df_head": file.df_head,
                 "details": [
-                    {"parquet_file_name": detail.parquet_file_name, "db_info_id": detail.db_info_id}
+                    {"parquet_file_name": detail.parquet_file_name, "db_info_id": detail.db_info_id, "total_rows": detail.total_rows}
                     for detail in file.details
                 ]
             }

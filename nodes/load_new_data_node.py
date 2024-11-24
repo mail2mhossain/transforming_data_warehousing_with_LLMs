@@ -31,7 +31,8 @@ def load_new_data(dataset_name, parquet_file_path):
 
     message = {
         "success": True,
-        "message": "Successfully loaded data into the database.",
+        "total_rows": total_rows,
+        "message": f"Successfully loaded {total_rows} rows into the database.",
     }
     
     return message
